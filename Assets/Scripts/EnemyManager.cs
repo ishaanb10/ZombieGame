@@ -8,31 +8,38 @@ public class EnemyManager : MonoBehaviour
     public GameObject player;
     public Animator enemyAnimator;
     public float damage = 20f;
-    // Start is called before the first frame update
-    void Start()
-    {
+    public float health = 100f;
+    public GameManager gameManager;
+
+    public void Hit(float damage){
+        health-= damage;
+
+        if(health<=0){
+            gameManager.enemiesAlive--;
+            //destroy enemy (zombie)
+            Destroy(gameObject);
+        }
+    }
+
+    // Start is called before the first frame update    
+    void Start(){
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         //navigation mesh - defines walkable area for zombie
         GetComponent<NavMeshAgent>().destination = player.transform.position; 
 
-        if (GetComponent<NavMeshAgent>().velocity.magnitude > 1)
-        {
+        if (GetComponent<NavMeshAgent>().velocity.magnitude > 1){
             enemyAnimator.SetBool("isRunning", true);
         }
-        else
-        {
+        else{
             enemyAnimator.SetBool("isRunning", false);
         }
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject == player)
-        {
+    private void OnCollisionEnter(Collision collision){
+        if (collision.gameObject == player){
             player.GetComponent<PlayerManager>().Hit(damage);
         }
     }
